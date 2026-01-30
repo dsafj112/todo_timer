@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="할 일 타이머 - 할 일 리스트와 타이머를 한 번에 관리하세요." />
+  <title>할 일 타이머</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg"></div>
+
+  <header class="site-header">
+    <div class="brand">
+      <div class="logo">TT</div>
+      <div class="brand-text">
+        <h1 data-i18n="appTitle">할 일 타이머</h1>
+        <p data-i18n="appTag">할 일 리스트와 타이머를 한 번에</p>
+      </div>
+    </div>
+
+    <div class="lang-switch">
+      <button class="btn ghost" id="langKo" aria-pressed="true">한국어</button>
+      <button class="btn ghost" id="langEn" aria-pressed="false">English</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="setupView" class="panel">
+      <h2 data-i18n="setupTitle">할 일 추가</h2>
+
+      <div class="form-grid">
+        <label class="field">
+          <span data-i18n="taskLabel">할 일</span>
+          <input id="taskInput" type="text" maxlength="80" placeholder="예: 이메일 정리" data-i18n-placeholder="taskPlaceholder" />
+        </label>
+
+        <div class="time-grid">
+          <label class="field">
+            <span data-i18n="hourLabel">시</span>
+            <input id="hourInput" type="number" min="0" max="23" value="0" inputmode="numeric" />
+          </label>
+          <label class="field">
+            <span data-i18n="minLabel">분</span>
+            <input id="minInput" type="number" min="0" max="59" value="25" inputmode="numeric" />
+          </label>
+          <label class="field">
+            <span data-i18n="secLabel">초</span>
+            <input id="secInput" type="number" min="0" max="59" value="0" inputmode="numeric" />
+          </label>
+        </div>
+
+        <button class="btn primary" id="addTaskBtn" data-i18n="addBtn">추가</button>
+      </div>
+
+      <div class="list-header">
+        <h3 data-i18n="listTitle">할 일 목록</h3>
+        <div class="list-actions">
+          <button class="btn ghost" id="clearListBtn" data-i18n="clearBtn">초기화</button>
+          <button class="btn success" id="startBtn" data-i18n="startBtn">실행하기</button>
+        </div>
+      </div>
+
+      <ul id="taskList" class="task-list" aria-live="polite"></ul>
+
+    </section>
+
+    <section id="runView" class="panel hidden" aria-live="polite">
+      <div class="run-header">
+        <h2 data-i18n="runTitle">진행 중</h2>
+        <button class="btn ghost" id="backBtn" data-i18n="backBtn">목록으로</button>
+      </div>
+
+      <div class="current-task">
+        <div>
+          <p class="label" data-i18n="currentTask">현재 할 일</p>
+          <h3 id="currentTaskTitle">-</h3>
+        </div>
+        <div class="badge" id="currentIndex">1 / 1</div>
+      </div>
+
+      <div class="timer">
+        <div class="time-block">
+          <div id="timeDisplay" class="time-display">00:00:00</div>
+        </div>
+        <div class="timer-actions">
+          <button class="btn danger" id="stopBtn" data-i18n="stopBtn">조기 종료</button>
+          <button class="btn success" id="nextBtn" data-i18n="nextBtn" disabled>다음</button>
+        </div>
+      </div>
+
+      <div class="queue">
+        <h4 data-i18n="queueTitle">대기 중</h4>
+        <ul id="queueList"></ul>
+      </div>
+
+      <div class="overall-progress">
+        <div class="progress-label" data-i18n="overallProgress">전체 진행도</div>
+        <div class="progress">
+          <div id="progressBar" class="progress-bar"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <!-- <div>
+        <h4 data-i18n="aboutTitle">이 앱은?</h4>
+        <p data-i18n="aboutText">
+          할 일을 추가하고, 순서대로 타이머를 실행해 집중을 돕는 웹앱입니다.
+        </p>
+        <div class="footer-links">
+          <a href="#" data-i18n="termsLink">이용약관</a>
+          <a href="#" data-i18n="contactLink">문의</a>
+        </div>
+      </div> -->
+      <div>
+        <h4 data-i18n="privacyTitle">개인정보 처리방침</h4>
+        <p data-i18n="privacyText">
+          이 앱은 할 일 데이터를 브라우저에만 저장하며 외부로 전송하지 않습니다.
+          실제 서비스용으로는 맞춤형 방침을 준비해 주세요.
+        </p>
+        <div class="footer-meta">
+          <span data-i18n="versionLabel">버전</span>
+          <span id="versionValue">v1.0</span>
+        </div>
+        <div class="footer-links">
+          <a href="#" data-i18n="termsLink">이용약관</a>
+          <a href="#" data-i18n="contactLink">문의</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
