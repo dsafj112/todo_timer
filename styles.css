@@ -204,6 +204,23 @@ input {
   background: #fff;
 }
 
+.task-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.task-btn {
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  box-shadow: none;
+}
+
+.task-btn.danger {
+  border: 1px solid rgba(213, 71, 77, 0.3);
+}
+
 .task-item h4 {
   margin: 0 0 4px;
 }
@@ -349,8 +366,25 @@ input {
 }
 
 .progress-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   font-weight: 600;
   color: var(--muted);
+}
+
+.progress-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.progress-count {
+  font-size: 12px;
+}
+
+.progress-percent {
+  font-variant-numeric: tabular-nums;
 }
 
 .queue {

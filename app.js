@@ -27,6 +27,7 @@ const els = {
   backBtn: document.getElementById("backBtn"),
   toast: document.getElementById("toast"),
   progressBar: document.getElementById("progressBar"),
+  progressPercent: document.getElementById("progressPercent"),
   langKo: document.getElementById("langKo"),
   langEn: document.getElementById("langEn"),
 };
@@ -66,6 +67,9 @@ const i18n = {
     toastCleared: "목록이 초기화되었습니다.",
     toastNoTasks: "먼저 할 일을 추가해 주세요.",
     doneAll: "모든 할 일을 완료했습니다!",
+    deleteTask: "삭제",
+    moveUp: "위로",
+    moveDown: "아래로",
   },
   en: {
     appTitle: "To-Do Timer",
@@ -101,6 +105,9 @@ const i18n = {
     toastCleared: "List reset.",
     toastNoTasks: "Add at least one task first.",
     doneAll: "All tasks completed!",
+    deleteTask: "Delete",
+    moveUp: "Up",
+    moveDown: "Down",
   },
 };
 
@@ -123,6 +130,7 @@ function setLanguage(lang) {
 
   els.langKo.setAttribute("aria-pressed", lang === "ko");
   els.langEn.setAttribute("aria-pressed", lang === "en");
+  renderTaskList();
 }
 
 function showToast(message) {
@@ -184,7 +192,11 @@ function renderTaskList() {
         <h4>${task.title}</h4>
         <p>${formatTime(task.totalSeconds)}</p>
       </div>
-      <div>#${idx + 1}</div>
+      <div class="task-actions">
+        <button class="btn ghost task-btn" data-action="up" data-index="${idx}" aria-label="${i18n[state.lang].moveUp}">▲</button>
+        <button class="btn ghost task-btn" data-action="down" data-index="${idx}" aria-label="${i18n[state.lang].moveDown}">▼</button>
+        <button class="btn ghost task-btn danger" data-action="delete" data-index="${idx}" aria-label="${i18n[state.lang].deleteTask}">${i18n[state.lang].deleteTask}</button>
+      </div>
     `;
     els.taskList.appendChild(li);
   });
@@ -203,6 +215,7 @@ function updateOverallProgress() {
   const total = state.tasks.length;
   if (!total) {
     els.progressBar.style.width = "0%";
+    els.progressPercent.textContent = "0%";
     return;
   }
 
@@ -215,7 +228,9 @@ function updateOverallProgress() {
   }
 
   const pct = ((state.currentIndex + fraction) / total) * 100;
-  els.progressBar.style.width = `${Math.min(100, Math.max(0, pct))}%`;
+  const clamped = Math.min(100, Math.max(0, pct));
+  els.progressBar.style.width = `${clamped}%`;
+  els.progressPercent.textContent = `${Math.round(clamped)}%`;
 }
 
 function addTask() {
@@ -246,6 +261,21 @@ function clearList() {
   showToast(i18n[state.lang].toastCleared);
 }
 
+function moveTask(index, dir) {
+  const target = index + dir;
+  if (target < 0 || target >= state.tasks.length) return;
+  const temp = state.tasks[index];
+  state.tasks[index] = state.tasks[target];
+  state.tasks[target] = temp;
+  renderTaskList();
+}
+
+function deleteTask(index) {
+  state.tasks.splice(index, 1);
+  renderTaskList();
+  updateOverallProgress();
+}
+
 function startRun() {
   if (state.tasks.length === 0) {
     showToast(i18n[state.lang].toastNoTasks);
@@ -274,6 +304,7 @@ function beginTask() {
     els.timeDisplay.textContent = "00:00:00";
     els.currentIndex.textContent = "0 / 0";
     els.nextBtn.disabled = true;
+    els.stopBtn.disabled = true;
     state.currentTotal = 0;
     state.remaining = 0;
     updateOverallProgress();
@@ -286,6 +317,7 @@ function beginTask() {
   els.currentTaskTitle.textContent = task.title;
   els.currentIndex.textContent = `${state.currentIndex + 1} / ${state.tasks.length}`;
   els.nextBtn.disabled = true;
+  els.stopBtn.disabled = false;
   renderQueue();
   updateTimerDisplay();
   updateOverallProgress();
@@ -312,6 +344,7 @@ function finishTimer() {
   updateOverallProgress();
   playBeep();
   els.nextBtn.disabled = false;
+  els.stopBtn.disabled = true;
 }
 
 function stopTimer() {
@@ -332,6 +365,7 @@ function earlyFinish() {
   updateTimerDisplay();
   updateOverallProgress();
   els.nextBtn.disabled = false;
+  els.stopBtn.disabled = true;
   playBeep();
 }
 
@@ -361,6 +395,16 @@ els.startBtn.addEventListener("click", startRun);
 els.backBtn.addEventListener("click", switchToSetupView);
 els.nextBtn.addEventListener("click", nextTask);
 els.stopBtn.addEventListener("click", earlyFinish);
+els.taskList.addEventListener("click", (event) => {
+  const btn = event.target.closest("[data-action]");
+  if (!btn) return;
+  const index = Number(btn.getAttribute("data-index"));
+  if (Number.isNaN(index)) return;
+  const action = btn.getAttribute("data-action");
+  if (action === "up") moveTask(index, -1);
+  if (action === "down") moveTask(index, 1);
+  if (action === "delete") deleteTask(index);
+});
 
 [els.hourInput, els.minInput, els.secInput].forEach((el) => {
   el.addEventListener("change", clampTimeInput);

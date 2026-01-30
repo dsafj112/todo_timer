@@ -76,7 +76,6 @@
           <p class="label" data-i18n="currentTask">현재 할 일</p>
           <h3 id="currentTaskTitle">-</h3>
         </div>
-        <div class="badge" id="currentIndex">1 / 1</div>
       </div>
 
       <div class="timer">
@@ -95,7 +94,13 @@
       </div>
 
       <div class="overall-progress">
-        <div class="progress-label" data-i18n="overallProgress">전체 진행도</div>
+        <div class="progress-label">
+          <span data-i18n="overallProgress">전체 진행도</span>
+          <span class="progress-meta">
+            <span id="currentIndex" class="badge progress-count">1 / 1</span>
+            <span id="progressPercent" class="progress-percent">0%</span>
+          </span>
+        </div>
         <div class="progress">
           <div id="progressBar" class="progress-bar"></div>
         </div>
